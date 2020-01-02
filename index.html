@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1">
+		
+		<title>weather api</title>
+		<!-- Loading main css file -->
+        <link rel="stylesheet" href="style.css">
+        <!-- Loading main js file -->
+        <!--<script src="api.js"></script>-->
+        <!-- Loading jquery -->
+        <script src="jquery-3.4.1.min.js"></script>
+    </head>
+</html>
+<script>
+    $(document).ready(function(){
+
+    function getweather(){
+        var apicall=`https://openweathermap.org/data/2.5/forecast?id=112931&appid=b6907d289e10d714a6e88b30761fae22`;
+        
+        $.getJSON(apicall,function weathercallback(data){
+            console.log(data);
+            updateDOM(data);
+        });
+    }
+    getweather();
+
+    function updateDOM(data){
+
+        var city =data.city.name;
+        var windspeed=data.list[0].wind.speed;
+        var humidity=data.list[0].main.humidity;
+
+        
+        function timeConverter(UNIX_timestamp,daynum){
+            var a = new Date(UNIX_timestamp * 1000);
+            var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            var year = a.getFullYear();
+            var month = months[a.getMonth()];
+            var date = a.getDate() + daynum;
+            var hour = a.getHours();
+            var min = a.getMinutes();
+            var sec = a.getSeconds();
+            var time = date + ' ' + month + ' ' + year ;
+            return time;
+        }
+        
+        var dates =[
+            timeConverter(data.list[0].dt,0),
+            timeConverter(data.list[1].dt,1),
+            timeConverter(data.list[2].dt,2),
+            timeConverter(data.list[3].dt,3),
+            timeConverter(data.list[4].dt,4),
+            timeConverter(data.list[5].dt,5),
+            timeConverter(data.list[6].dt,6),
+        ];
+        var da;
+        for(da of dates){
+            $('.date').html(dates[0]);
+            $('.day1').html(dates[1]);
+            $('.day2').html(dates[2]);
+            $('.day3').html(dates[3]);
+            $('.day4').html(dates[4]);
+            $('.day5').html(dates[5]);
+            $('.day6').html(dates[6]);
+        }
+        
+        
+        var temps=[Math.round(data.list[0].main.temp),
+        Math.round(data.list[1].main.temp),
+        Math.round(data.list[2].main.temp),
+        Math.round(data.list[3].main.temp),
+        Math.round(data.list[4].main.temp),
+        Math.round(data.list[5].main.temp),
+        Math.round(data.list[6].main.temp)
+        ];
+
+        var t;
+        for(t of temps){
+            $('.num').html(temps[0]);
+            $('.num1').html(temps[1]);
+            $('.num2').html(temps[2]);
+            $('.num3').html(temps[3]);
+            $('.num4').html(temps[4]);
+            $('.num5').html(temps[5]);
+            $('.num6').html(temps[6]);
+        }
+
+        var iconcodes=[
+        data.list[0].weather[0].icon,
+        data.list[1].weather[0].icon,
+        data.list[2].weather[0].icon,
+        data.list[3].weather[0].icon,
+        data.list[4].weather[0].icon,
+        data.list[5].weather[0].icon,
+        data.list[6].weather[0].icon
+        ];
+        var iconurls=[
+        "http://openweathermap.org/img/w/" + iconcodes[0] + ".png",
+        "http://openweathermap.org/img/w/" + iconcodes[1] + ".png",
+        "http://openweathermap.org/img/w/" + iconcodes[2] + ".png",
+        "http://openweathermap.org/img/w/" + iconcodes[3] + ".png",
+        "http://openweathermap.org/img/w/" + iconcodes[4] + ".png",
+        "http://openweathermap.org/img/w/" + iconcodes[5] + ".png",
+        "http://openweathermap.org/img/w/" + iconcodes[6] + ".png",
+        ];
+
+        var ic;
+        for(ic of iconurls){
+            $('#icon').attr('src',iconurls[0]);
+            $('#icon1').attr('src',iconurls[1]);
+            $('#icon2').attr('src',iconurls[2]);
+            $('#icon3').attr('src',iconurls[3]);
+            $('#icon4').attr('src',iconurls[4]);
+            $('#icon5').attr('src',iconurls[5]);
+            $('#icon6').attr('src',iconurls[6]);
+        }
+        var descs=[
+        data.list[0].weather[0].description,
+        data.list[1].weather[0].description,
+        data.list[2].weather[0].description,
+        data.list[3].weather[0].description,
+        data.list[4].weather[0].description,
+        data.list[5].weather[0].description,
+        data.list[6].weather[0].description,
+        ];
+        
+        var de;
+        for(de of descs){
+            $('.desc').html(descs[0]);
+            $('.desc1').html(descs[1]);
+            $('.desc2').html(descs[2]);
+            $('.desc3').html(descs[3]);
+            $('.desc4').html(descs[4]);
+            $('.desc5').html(descs[5]);
+            $('.desc6').html(descs[6]);
+        }
+
+        $('.city').html(city);   
+        $('#wind').html(`wind:${windspeed} km/h`);
+        $('#humidity').html(`humidity:${humidity}&#176`);
+    }
+});
+</script>
+<body>
+    <div class="site-content">
+        <div class="site-header">
+            <div class="container">
+                <a href="index.html" class="branding">
+                    <img src="pics/logo.png" alt="" class="logo">
+                    <div class="logo-type">
+                        <h1 class="site-title">Weather forcast</h1>
+                        <small class="site-description">beta</small>
+                    </div>
+                </a>
+                <div class="main-navigation">
+                    <button type="button" class="menu-toggle"><i class="fa fa-bars"></i></button>
+                    <ul class="menu">
+                        <li class="menu-item"><a href="index.html">Week Forcast</a></li>
+                        <li class="menu-item"><a href="daily.html">Daily forcast</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="hero" data-bg-image="pics/back.png">
+            <div class="forecast-table">
+                <div class="container">
+                    <div class="forecast-container">
+                        <div class="today forecast">
+                            <div class="forecast-header">
+                                <div class="date"></div>
+                            </div> <!-- .forecast-header -->
+                            <div class="forecastcontent">
+                                <div class="city"></div>
+                                <div class="degree">
+                                    <div class="num"></div><sup>o</sup>C
+                                    <div class="forecast-icon">
+                                        <img id="icon" src="" width="100px">
+                                    </div>	
+                                </div>
+                                <span class="desc"></span>
+                                <span id="wind"></span>
+                                <span id="humidity"></span>
+                            </div>
+                        </div>
+                        <div class="forecast">
+                            <div class="forecast-header">
+                                <div class="day1"></div>
+                            </div> <!-- .forecast-header -->
+                            <div class="forecastcontent">
+                                <div class="forecast-icon">
+                                    <img id="icon1" src="" width="50px">
+                                </div>
+                                <div class="degree"><span class="num1"></span><sup>o</sup>C</div>
+                                <span class="desc1"></span>
+                            </div>
+                        </div>
+                        <div class="forecast">
+                            <div class="forecast-header">
+                                <div class="day2"></div>
+                            </div> <!-- .forecast-header -->
+                            <div class="forecastcontent">
+                                <div class="forecast-icon">
+                                    <img id="icon2" src="" width="50px">
+                                </div>
+                                <div class="degree"><span class="num2"></span><sup>o</sup>C</div>
+                                <span class="desc2"></span>
+                            </div>
+                        </div>
+                        <div class="forecast">
+                            <div class="forecast-header">
+                                <div class="day3"></div>
+                            </div> <!-- .forecast-header -->
+                            <div class="forecastcontent">
+                                <div class="forecast-icon">
+                                    <img id="icon3" src="" width="50px">
+                                </div>
+                                <div class="degree"><span class="num3"></span><sup>o</sup>C</div>
+                                <span class="desc3"></span>
+                            </div>
+                        </div>
+                        <div class="forecast">
+                            <div class="forecast-header">
+                                <div class="day4"></div>
+                            </div> <!-- .forecast-header -->
+                            <div class="forecastcontent">
+                                <div class="forecast-icon">
+                                    <img id="icon4" src="" width="50px">
+                                </div>
+                                <div class="degree"><span class="num4"></span><sup>o</sup>C</div>
+                                <span class="desc4"></span>
+                            </div>
+                        </div>
+                        <div class="forecast">
+                            <div class="forecast-header">
+                                <div class="day5"></div>
+                            </div> <!-- .forecast-header -->
+                            <div class="forecastcontent">
+                                <div class="forecast-icon">
+                                    <img id="icon5" src="" width="50px">
+                                </div>
+                                <div class="degree"><span class="num5"></span><sup>o</sup>C</div>
+                                <span class="desc5"></span>
+                            </div>
+                        </div>
+                        <div class="forecast">
+                            <div class="forecast-header">
+                                <div class="day6"></div>
+                            </div> <!-- .forecast-header -->
+                            <div class="forecastcontent">
+                                <div class="forecast-icon">
+                                    <img id="icon6" src="" width="50px">
+                                </div>
+                                <div class="degree"><span class="num6"></span><sup>o</sup>C</div>
+                                <span class="desc6"></span>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
